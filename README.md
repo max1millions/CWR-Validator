@@ -27,17 +27,71 @@ inside `cwr_validator/preprocess.py`; the on-disk file is never modified.
 
 ## Quick start
 
+One-time setup (from the CWR-Validator project root):
+
 ```bash
 cd CWR-Validator
 pip install -r requirements.txt
-python validate_cwr.py tests/fixtures/sample_v21.V21
-python validate_cwr.py --version 2.1 path/to/file.V21
 ```
 
-Or after `pip install -e .`:
+Optional — install the `validate-cwr` console script:
+
+```bash
+pip install -e .
+```
+
+## Validate CWR files
+
+Run these from the CWR-Validator project root unless noted. Library paths default to the sibling checkouts `../CWR_LIBRARY_V2.1` and `../CWR_LIBRARY_V2.2`.
+
+**v2.1 fixture** (bundled sample that should pass):
+
+```bash
+python validate_cwr.py tests/fixtures/sample_v21.V21
+```
+
+**v2.2 file** (any `.V22` on disk):
+
+```bash
+python validate_cwr.py path/to/file.V22
+```
+
+**Force version** (when extension is missing or you want to override):
+
+```bash
+python validate_cwr.py --version 2.1 tests/fixtures/sample_v21.V21
+python validate_cwr.py --version 2.2 path/to/file.V22
+```
+
+**Multiple files in one run:**
+
+```bash
+python validate_cwr.py tests/fixtures/sample_v21.V21 path/to/file.V22
+```
+
+**Verbose** (group and transaction counts on success):
+
+```bash
+python validate_cwr.py -v tests/fixtures/sample_v21.V21
+```
+
+**Quiet** (print failures only):
+
+```bash
+python validate_cwr.py -q path/to/*.V22
+```
+
+**JSON output** (one array of result objects):
+
+```bash
+python validate_cwr.py --json tests/fixtures/sample_v21.V21
+```
+
+**Console script** (after `pip install -e .`):
 
 ```bash
 validate-cwr path/to/file.V22
+validate-cwr -v tests/fixtures/sample_v21.V21
 ```
 
 ## CLI options
@@ -56,11 +110,13 @@ package name. The CLI runs one **subprocess per file** so imports do not collide
 
 Configure paths in one of these ways (highest precedence first):
 
-| Source | Key / variable |
-|--------|----------------|
-| Environment | `CWR_LIBRARY_V21_PATH`, `CWR_LIBRARY_V22_PATH` |
-| `data_validator/config.properties` | `library.v21.path`, `library.v22.path` |
-| Default | `../CWR_LIBRARY_V2.1`, `../CWR_LIBRARY_V2.2` |
+
+| Source                             | Key / variable                                 |
+| ---------------------------------- | ---------------------------------------------- |
+| Environment                        | `CWR_LIBRARY_V21_PATH`, `CWR_LIBRARY_V22_PATH` |
+| `data_validator/config.properties` | `library.v21.path`, `library.v22.path`         |
+| Default                            | `../CWR_LIBRARY_V2.1`, `../CWR_LIBRARY_V2.2`   |
+
 
 Paths may be absolute or relative to the CWR-Validator submodule root. See
 `.env.example` for a template.
