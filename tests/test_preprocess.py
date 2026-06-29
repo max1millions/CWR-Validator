@@ -7,12 +7,12 @@ from cwr_validator.preprocess import normalize_contents_for_decode
 
 def test_hdr_ipnn_workaround_rewrites_sender_type():
     hdr = (
-        "HDR01278837007RIGHTSTUNE                                   "
-        "01.102026062910551820260629ASCII          2.2\r\n"
+        "HDR01234567890THE SENDER                                   "
+        "01.102026060610551820260606               \r\n"
         "GRHNWR0000102.200000000001\r\n"
     )
     result = normalize_contents_for_decode(hdr, "2.2")
-    assert result.startswith("HDRPB278837007RIGHTSTUNE")
+    assert result.startswith("HDRPB234567890THE SENDER")
     assert "GRHNWR0000102.100000000001" in result
 
 

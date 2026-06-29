@@ -13,7 +13,7 @@ _tests_require = ["pytest"]
 
 here = path.abspath(path.dirname(__file__))
 
-with open(path.join(here, "README.rst"), encoding="utf-8") as f:
+with open(path.join(here, "README.md"), encoding="utf-8") as f:
     long_description = f.read()
 
 with open("cwr_validator/__init__.py", "rb", encoding="utf-8") as f:
@@ -44,6 +44,7 @@ setup(
         "Programming Language :: Python :: 3.13",
     ],
     long_description=long_description,
+    long_description_content_type="text/markdown",
     install_requires=[
         "pyparsing>=3.0.0,<3.1.0",
         "pyyaml>=3.11",

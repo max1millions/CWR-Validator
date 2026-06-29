@@ -10,29 +10,33 @@ from cwr_validator.preprocess import normalize_contents_for_decode
 from cwr_validator.validator import validate_file
 
 VALIDATOR_ROOT = Path(__file__).resolve().parents[1]
-CWR_INTERFACE_ROOT = VALIDATOR_ROOT.parents[1]
-V22_OUTPUT = CWR_INTERFACE_ROOT / "OUTPUT" / "CW260001RIT_088.V22"
+HDR_IPNN_FIXTURE = VALIDATOR_ROOT / "tests" / "fixtures" / "hdr_ipnn_v21.V21"
 
 
-def test_rights_tune_v22_hdr_is_normalized():
-    if not V22_OUTPUT.is_file():
-        pytest.skip("RightsTune V22 output fixture not present")
-
-    raw = V22_OUTPUT.read_text(encoding="latin-1")
+def test_hdr_ipnn_is_normalized():
+    raw = HDR_IPNN_FIXTURE.read_text(encoding="latin-1")
     first_line = raw.splitlines()[0]
     assert first_line.startswith("HDR01")
 
-    normalized = normalize_contents_for_decode(raw, "2.2")
-    assert normalized.splitlines()[0].startswith("HDRPB278837007")
+    normalized = normalize_contents_for_decode(raw, "2.1")
+    assert normalized.splitlines()[0].startswith("HDRPB234567890")
+
+
+def test_hdr_ipnn_grh_v22_version_is_normalized():
+    """GRH 02.20 is mapped to 02.10 for decode-only passes on v2.2 files."""
+    contents = (
+        "HDRPB234567890THE SENDER                                   "
+        "01.102026060610551820260606               \r\n"
+        "GRHNWR0000102.200000000001\r\n"
+    )
+    result = normalize_contents_for_decode(contents, "2.2")
+    assert "GRHNWR0000102.100000000001" in result
 
 
 @pytest.mark.integration
-def test_validate_rights_tune_v22_output(sibling_library_paths):
-    if not V22_OUTPUT.is_file():
-        pytest.skip("RightsTune V22 output fixture not present")
-
-    result = validate_file(V22_OUTPUT)
+def test_validate_hdr_ipnn_fixture(sibling_library_paths):
+    result = validate_file(HDR_IPNN_FIXTURE)
     if not result.ok:
-        pytest.skip(f"Full decode still blocked by library stack: {result.error}")
-    assert result.version == "2.2"
+        pytest.skip(f"CWR library decode unavailable in this environment: {result.error}")
+    assert result.version == "2.1"
     assert result.groups is not None and result.groups >= 1
