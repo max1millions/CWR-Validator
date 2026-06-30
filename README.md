@@ -39,13 +39,16 @@ One-time setup (from the CWR-Validator project root):
 
 ```bash
 cd CWR-Validator
-pip install -r requirements.txt
+python3 -m venv .venv
+.venv/bin/pip install -r requirements.txt
 ```
+
+Use `.venv/bin/python` (or `python3` if dependencies are installed globally). On macOS, bare `python` is often unavailable.
 
 Optional — install the `validate-cwr` console script:
 
 ```bash
-pip install -e .
+.venv/bin/pip install -e .
 ```
 
 ## Validate CWR files
@@ -55,47 +58,47 @@ Run these from the CWR-Validator project root unless noted. Library paths defaul
 **v2.1 fixture** (bundled sample that should pass):
 
 ```bash
-python validate_cwr.py tests/fixtures/sample_v21.V21
+.venv/bin/python validate_cwr.py tests/fixtures/sample_v21.V21
 ```
 
 **v2.2 file** (any `.V22` on disk):
 
 ```bash
-python validate_cwr.py path/to/file.V22
+.venv/bin/python validate_cwr.py path/to/file.V22
 ```
 
 **Force version** (when extension is missing or you want to override):
 
 ```bash
-python validate_cwr.py --version 2.1 tests/fixtures/sample_v21.V21
-python validate_cwr.py --version 2.2 path/to/file.V22
+.venv/bin/python validate_cwr.py --version 2.1 tests/fixtures/sample_v21.V21
+.venv/bin/python validate_cwr.py --version 2.2 path/to/file.V22
 ```
 
 **Multiple files in one run:**
 
 ```bash
-python validate_cwr.py tests/fixtures/sample_v21.V21 path/to/file.V22
+.venv/bin/python validate_cwr.py tests/fixtures/sample_v21.V21 path/to/file.V22
 ```
 
 **Verbose** (group and transaction counts on success):
 
 ```bash
-python validate_cwr.py -v tests/fixtures/sample_v21.V21
+.venv/bin/python validate_cwr.py -v tests/fixtures/sample_v21.V21
 ```
 
 **Quiet** (print failures only):
 
 ```bash
-python validate_cwr.py -q path/to/*.V22
+.venv/bin/python validate_cwr.py -q path/to/*.V22
 ```
 
 **JSON output** (one array of result objects):
 
 ```bash
-python validate_cwr.py --json tests/fixtures/sample_v21.V21
+.venv/bin/python validate_cwr.py --json tests/fixtures/sample_v21.V21
 ```
 
-**Console script** (after `pip install -e .`):
+**Console script** (after `.venv/bin/pip install -e .`):
 
 ```bash
 validate-cwr path/to/file.V22
@@ -132,8 +135,8 @@ Paths may be absolute or relative to the CWR-Validator submodule root. See
 ## Development
 
 ```bash
-pip install -r requirements.txt
-pytest
+.venv/bin/pip install -r requirements.txt
+.venv/bin/pytest
 ```
 
 Optional integration tests (`pytest -m integration`) decode a built-in v2.1
