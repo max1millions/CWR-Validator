@@ -8,16 +8,24 @@ Validation means the file decodes successfully through `default_file_decoder()`
 from the selected library version. This confirms structural parseability against
 that library's grammar; it is not a full CISAC business-rule audit.
 
-## HDR IPNN workaround (11-digit sender IDs)
+## HDR decode-time shims (`preprocess.py`)
 
-CWR 2.1 Rev 8 and 2.2 Rev 2 allow publishers whose IPI Name Number exceeds nine
-digits to place the leading two digits in the HDR **Sender Type** field and the
-remaining nine in **Sender ID** (CWR 2.1 Rev 8 / 2.2 Rev 2). The
-validator rewrites that HDR layout to `PB` + nine-digit tail before calling the
-DataApi decoder, because the upstream library grammars only accept `PB` /
-`SO` / `AA` / `WR` in Sender Type. For v2.2 files it also maps GRH
-`02.20` to `02.10` for the same decode pass. These are decode-time shims
-inside `cwr_validator/preprocess.py`; the on-disk file is never modified.
+All shims run before calling the DataApi decoder. The on-disk file is never
+modified.
+
+**IPNN Sender Type (11-digit sender IDs)** — CWR 2.1 Rev 8 and 2.2 Rev 2 allow
+publishers whose IPI Name Number exceeds nine digits to place the leading two
+digits in the HDR **Sender Type** field and the remaining nine in **Sender ID**.
+The validator rewrites that layout to `PB` + nine-digit tail because the
+upstream library grammars only accept `PB` / `SO` / `AA` / `WR` in Sender Type.
+
+**Character Set `ASCII`** — CISAC defines the HDR Character Set field (positions
+87–101) for non-ASCII encodings only; many production files still write `ASCII`
+there. The DataApi charset grammar accepts `Big5`, `GB`, and Unicode codes but
+not that literal, so the validator blanks an `ASCII` value (same as omitted)
+for decode only.
+
+**GRH version (v2.2 only)** — maps `02.20` to `02.10` for the decode pass.
 
 ## Requirements
 
