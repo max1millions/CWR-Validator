@@ -25,10 +25,12 @@ def decode_file(library_path: Path, file_path: Path, version: str) -> dict:
     from cwr.parser.decoder.file import default_file_decoder
 
     filename = file_path.name
-    contents = normalize_contents_for_decode(
-        file_path.read_text(encoding="latin-1"),
-        version,
-    )
+    raw = file_path.read_bytes()
+    try:
+        contents = raw.decode("utf-8")
+    except UnicodeDecodeError:
+        contents = raw.decode("latin-1")
+    contents = normalize_contents_for_decode(contents, version)
     decoder = default_file_decoder()
     cwr_file = decoder.decode({"filename": filename, "contents": contents})
     transmission = cwr_file.transmission
