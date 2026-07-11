@@ -18,7 +18,7 @@ def test_version_from_extension():
 
 def test_resolve_file_version_from_extension():
     assert resolve_file_version(Path("CW12012311_22.V21"), None) == "2.1"
-    assert resolve_file_version(Path("CW2516RIT_707.V22"), None) == "2.2"
+    assert resolve_file_version(Path("CW251600001_707.V22"), None) == "2.2"
 
 
 def test_forced_version_matches_extension():

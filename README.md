@@ -20,12 +20,14 @@ The validator rewrites that layout to `PB` + nine-digit tail because the
 upstream library grammars only accept `PB` / `SO` / `AA` / `WR` in Sender Type.
 
 **Character Set `ASCII`** — CISAC defines the HDR Character Set field (positions
-87–101) for non-ASCII encodings only; many production files still write `ASCII`
-there. The DataApi charset grammar accepts `Big5`, `GB`, and Unicode codes but
-not that literal, so the validator blanks an `ASCII` value (same as omitted)
-for decode only. Generated files that include Non-Roman Alphabet records
-(NAT/NPN/NWN/NPR/NVT/NOW) set this field to `U+0000` and may be encoded as
-`latin-1` or `utf-8`; the worker tries UTF-8 first, then falls back to latin-1.
+87–101) for non-ASCII encodings only. Many generators leave the field
+blank for ASCII-only files and, when NRA records are present, may set a Unicode
+chart code covering the highest non-ASCII code point in those payloads (e.g.
+`U+0080` for Latin-1 Supplement). Older or third-party files may still write
+the literal `ASCII`; the DataApi charset grammar accepts `Big5`, `GB`, and
+Unicode codes but not that literal, so the validator blanks an `ASCII` value
+(same as omitted) for decode only. NRA files may be encoded as `latin-1` or
+`utf-8`; the worker tries UTF-8 first, then falls back to latin-1.
 
 **GRH version (v2.2 only)** — maps `02.20` to `02.10` for the decode pass.
 

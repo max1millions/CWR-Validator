@@ -23,7 +23,7 @@ def test_hdr_standard_sender_type_unchanged():
 
 def test_hdr_ascii_character_set_is_blanked_for_decode():
     hdr = (
-        "HDRPB278837007RIGHTSTUNE                                   "
+        "HDRPB123456789ACME PUBLISHING                              "
         "01.102026062917593820260629ASCII          2.2\r\n"
     )
     result = normalize_contents_for_decode(hdr, "2.2")
@@ -33,7 +33,7 @@ def test_hdr_ascii_character_set_is_blanked_for_decode():
 
 def test_hdr_non_ascii_character_set_unchanged():
     hdr = (
-        "HDRPB278837007RIGHTSTUNE                                   "
+        "HDRPB123456789ACME PUBLISHING                              "
         "01.102026062917593820260629Big5           2.2\r\n"
     )
     assert normalize_contents_for_decode(hdr, "2.2") == hdr

@@ -46,7 +46,8 @@ def _normalize_hdr_ipnn(hdr_line: str) -> str:
 def _normalize_hdr_character_set_ascii(hdr_line: str) -> str:
     """Blank HDR Character Set when submitters wrote ASCII (decode-only shim).
 
-    CISAC defines the field for non-ASCII sets only; many files still carry
+    CISAC defines the field for non-ASCII sets only. Many generators omit
+    the field for ASCII-only files; older/third-party files may still carry
     ``ASCII`` there. The DataApi charset grammar accepts Big5, GB, and Unicode
     codes but not that literal, so treat ASCII the same as an omitted field.
     """
