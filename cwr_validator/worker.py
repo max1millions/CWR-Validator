@@ -22,6 +22,9 @@ def _count_transactions(transmission) -> int:
 
 def decode_file(library_path: Path, file_path: Path, version: str) -> dict:
     sys.path.insert(0, str(library_path))
+    from cwr_validator.tables import patch_cwr_tables
+
+    patch_cwr_tables()
     from cwr.parser.decoder.file import default_file_decoder
 
     filename = file_path.name
