@@ -5,8 +5,9 @@ and **v2.2** (`.V22`) files. Parsing uses local checkouts of the CWR DataApi
 library, not the legacy PyPI `CWR-API` package.
 
 Validation means the file decodes successfully through `default_file_decoder()`
-from the selected library version. This confirms structural parseability against
-that library's grammar; it is not a full CISAC business-rule audit.
+from the selected library version, then CISAC transaction rules the grammar
+does not enforce are applied. A decode success with a rule violation is still
+a failed validation (`CWRRuleError`).
 
 ## HDR decode-time shims (`preprocess.py`)
 
@@ -30,6 +31,19 @@ Unicode codes but not that literal, so the validator blanks an `ASCII` value
 `utf-8`; the worker tries UTF-8 first, then falls back to latin-1.
 
 **GRH version (v2.2 only)** — maps `02.20` to `02.10` for the decode pass.
+
+## Transaction rules (`rules.py`)
+
+After a successful decode, the worker walks each NWR/REV/ISW/EXC transaction
+and fails the file on CISAC TR edits that societies enforce but the DataApi
+grammar does not.
+
+**Rule 45** (CWR 2.2 Rev 2 §4.4 work-transaction edit 45; MusicMark validation
+number `045`) — if Text Music Relationship is `MUS` (music only), SWR/OWR
+writer designations must be `C` or `AR`. `CA`, `A`, `SA`, and `TR` are
+transaction-rejected. Composer/author (`CA`) on an instrumental work is the
+typical generator miss: change the writer to `C` (composer) or set the work
+to `MTX` if it has lyrics.
 
 ## Requirements
 

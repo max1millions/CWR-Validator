@@ -63,3 +63,26 @@ def test_worker_subprocess_entry(sibling_library_paths, tmp_path):
     if not payload["ok"]:
         pytest.skip(f"CWR library decode failed: {payload.get('error')}")
     assert proc.returncode == 0
+
+
+@pytest.mark.integration
+def test_worker_rejects_mus_with_ca_writer(sibling_library_paths, tmp_path):
+    """CWR 2.2 rule 45: MUS + CA is a transaction reject after a successful decode."""
+    from tests.data.sample_v21_contents import sample_v21_mus_with_ca_contents
+
+    v21, _v22 = sibling_library_paths
+    file_path = tmp_path / "mus_ca.V21"
+    file_path.write_text(sample_v21_mus_with_ca_contents(), encoding="latin-1")
+
+    try:
+        result = decode_file(v21, file_path, "2.1")
+    except Exception as exc:
+        pytest.skip(f"CWR library decode unavailable in this environment: {exc}")
+
+    if result.get("error_type") not in (None, "CWRRuleError") and not result["ok"]:
+        pytest.skip(f"CWR library decode failed: {result.get('error')}")
+
+    assert result["ok"] is False
+    assert result["error_type"] == "CWRRuleError"
+    assert result["violation_count"] >= 1
+    assert result["violations"][0]["rule"] == "045"

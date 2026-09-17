@@ -28,6 +28,8 @@ def _format_result(result: ValidationResult, verbose: bool) -> str:
     detail = result.error or "unknown error"
     if result.error_type:
         detail = f"{result.error_type}: {detail}"
+    if result.violation_count:
+        detail = f"{detail} [{result.violation_count} rule violation(s)]"
     return f"FAIL  {name}  ({result.version})  {detail}"
 
 

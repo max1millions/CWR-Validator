@@ -28,9 +28,17 @@ class ValidationResult:
     transactions: int | None = None
     error: str | None = None
     error_type: str | None = None
+    violations: list | None = None
+    violation_count: int | None = None
 
     @classmethod
     def from_dict(cls, data: dict) -> ValidationResult:
+        violations = data.get("violations")
+        if violations is not None and not isinstance(violations, list):
+            violations = None
+        count = data.get("violation_count")
+        if count is None and violations:
+            count = len(violations)
         return cls(
             ok=bool(data.get("ok")),
             version=data.get("version", ""),
@@ -39,6 +47,8 @@ class ValidationResult:
             transactions=data.get("transactions"),
             error=data.get("error"),
             error_type=data.get("error_type"),
+            violations=violations,
+            violation_count=count,
         )
 
 

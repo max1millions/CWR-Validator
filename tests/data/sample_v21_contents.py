@@ -90,3 +90,12 @@ def sample_v21_contents() -> str:
         + "\n"
         + trailer_file
     )
+
+
+def sample_v21_mus_with_ca_contents() -> str:
+    """Same fixture as ``sample_v21_contents`` with rule 45 violated (MUS + CA)."""
+    return (
+        sample_v21_contents()
+        .replace("YMTX", "YMUS")
+        .replace("C          0026058307861", "CA         0026058307861")
+    )

@@ -10,6 +10,7 @@ from pathlib import Path
 
 
 from cwr_validator.preprocess import normalize_contents_for_decode
+from cwr_validator.rules import collect_rule_violations
 
 
 def _count_transactions(transmission) -> int:
@@ -37,13 +38,31 @@ def decode_file(library_path: Path, file_path: Path, version: str) -> dict:
     decoder = default_file_decoder()
     cwr_file = decoder.decode({"filename": filename, "contents": contents})
     transmission = cwr_file.transmission
-    return {
+    violations = collect_rule_violations(transmission)
+    payload = {
         "ok": True,
         "version": version,
         "file": str(file_path),
         "groups": len(transmission.groups),
         "transactions": _count_transactions(transmission),
     }
+    if violations:
+        preview = violations[0]["message"]
+        extra = (
+            f" ({len(violations)} transactions)"
+            if len(violations) > 1
+            else ""
+        )
+        payload.update(
+            {
+                "ok": False,
+                "error": f"{preview}{extra}",
+                "error_type": "CWRRuleError",
+                "violations": violations,
+                "violation_count": len(violations),
+            }
+        )
+    return payload
 
 
 def main(argv: list[str] | None = None) -> int:
